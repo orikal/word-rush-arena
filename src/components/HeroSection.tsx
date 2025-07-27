@@ -12,7 +12,7 @@ const HeroSection = () => {
       />
       
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-hero opacity-90" />
+      <div className="absolute inset-0 bg-gradient-hero opacity-90 pointer-events-none" />
       
       {/* Animated Letters */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
