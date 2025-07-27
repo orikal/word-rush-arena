@@ -34,17 +34,45 @@ const HeroSection = () => {
       {/* Main Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
         <div className="animate-slide-up">
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
-            תור שלך!
+          <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent text-center">
+            בחר דמות, אתגר חבר
           </h1>
           
-          <p className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
-            תענה מהר או תדלג
+          <p className="text-xl md:text-2xl lg:text-3xl font-semibold text-foreground mb-4 text-center">
+            ותהיה אלוף המילים הבא!
           </p>
           
-          <p className="text-xl md:text-2xl text-muted-foreground mb-12">
-            רק אל תבזבז את הזמן! 🔥
+          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-8 text-center">
+            משחק מילים חכם – מהיר – מהפנט 🧠⚡
           </p>
+          
+          {/* Character Preview */}
+          <div className="flex justify-center gap-4 mb-8 overflow-x-auto pb-4">
+            <div className="flex-shrink-0 text-center">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gaming-purple/20 border-2 border-gaming-purple flex items-center justify-center mb-2">
+                <span className="text-2xl md:text-3xl">🧙‍♂️</span>
+              </div>
+              <p className="text-xs text-muted-foreground">קוסם מילים</p>
+            </div>
+            <div className="flex-shrink-0 text-center">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gaming-cyan/20 border-2 border-gaming-cyan flex items-center justify-center mb-2">
+                <span className="text-2xl md:text-3xl">🦄</span>
+              </div>
+              <p className="text-xs text-muted-foreground">חד קרן</p>
+            </div>
+            <div className="flex-shrink-0 text-center">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gaming-green/20 border-2 border-gaming-green flex items-center justify-center mb-2">
+                <span className="text-2xl md:text-3xl">🐉</span>
+              </div>
+              <p className="text-xs text-muted-foreground">דרקון חכם</p>
+            </div>
+            <div className="flex-shrink-0 text-center">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gaming-orange/20 border-2 border-gaming-orange flex items-center justify-center mb-2">
+                <span className="text-2xl md:text-3xl">🎭</span>
+              </div>
+              <p className="text-xs text-muted-foreground">שחקן</p>
+            </div>
+          </div>
         </div>
         
         {/* Game Features */}
@@ -67,14 +95,24 @@ const HeroSection = () => {
           </div>
         </div>
         
-        {/* CTA Buttons */}
-        <div className="flex flex-col md:flex-row gap-6 justify-center items-center animate-slide-up" style={{ animationDelay: '0.6s' }}>
-          <Button variant="hero" size="xl" className="w-full md:w-auto">
-            התחל לשחק עכשיו
+        {/* CTA Button */}
+        <div className="flex justify-center animate-slide-up" style={{ animationDelay: '0.6s' }}>
+          <Button variant="hero" size="xl" className="w-full max-w-xs text-lg py-4">
+            שחק עכשיו בחינם 🎮
           </Button>
-          <Button variant="gaming" size="xl" className="w-full md:w-auto">
-            הזמן חבר למשחק
-          </Button>
+        </div>
+        
+        {/* Interactive Demo Preview */}
+        <div className="mt-12 animate-slide-up" style={{ animationDelay: '0.9s' }}>
+          <div className="bg-card/10 backdrop-blur-md rounded-xl p-6 border border-gaming-purple/30 max-w-sm mx-auto">
+            <p className="text-sm text-muted-foreground mb-3">הדגמה אינטראקטיבית:</p>
+            <div className="bg-gaming-purple/20 rounded-lg p-4 mb-3">
+              <p className="text-2xl font-bold text-center text-gaming-cyan animate-pulse">
+                ק ו ר ח ב
+              </p>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">המילה: "חבוק" ← זמן: 42 שניות</p>
+          </div>
         </div>
       </div>
     </section>

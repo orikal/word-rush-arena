@@ -9,12 +9,12 @@ const LuckyWheel = () => {
   const [lastPrize, setLastPrize] = useState(null)
 
   const prizes = [
-    { name: "קטגוריה חדשה", icon: Unlock, color: "gaming-purple" },
-    { name: "רקע גרפי", icon: Palette, color: "gaming-cyan" },
-    { name: "בונוס רמזים", icon: Zap, color: "gaming-orange" },
-    { name: "תג הישג", icon: Trophy, color: "gaming-green" },
-    { name: "פרס מיוחד", icon: Gift, color: "gaming-pink" },
-    { name: "זמן נוסף", icon: RotateCcw, color: "gaming-blue" }
+    { name: "דמות חדשה 🧙‍♀️", icon: Unlock, color: "gaming-purple", emoji: "🧙‍♀️" },
+    { name: "רקע ספרייה קסומה", icon: Palette, color: "gaming-cyan", emoji: "📚" },
+    { name: "רמזים למשחק x5", icon: Zap, color: "gaming-orange", emoji: "💡" },
+    { name: "תג 'אלוף מוח'", icon: Trophy, color: "gaming-green", emoji: "🏆" },
+    { name: "דמות דרקון זהב", icon: Gift, color: "gaming-pink", emoji: "🐉" },
+    { name: "זמן בונוס +10 שנ'", icon: RotateCcw, color: "gaming-blue", emoji: "⏰" }
   ]
 
   const handleSpin = () => {
@@ -106,12 +106,12 @@ const LuckyWheel = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <div className={`w-20 h-20 mx-auto mb-4 rounded-full bg-${lastPrize.color}/20 text-${lastPrize.color} flex items-center justify-center`}>
-                    <lastPrize.icon className="w-10 h-10" />
+                  <div className="text-6xl mb-4 animate-bounce">
+                    {lastPrize.emoji}
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">{lastPrize.name}</h3>
-                  <Badge variant="secondary" className="bg-gaming-green/20 text-gaming-green border-gaming-green/30">
-                    זכית!
+                  <h3 className="text-xl font-bold mb-2">{lastPrize.name}</h3>
+                  <Badge variant="secondary" className="bg-gaming-green/20 text-gaming-green border-gaming-green/30 text-lg px-4 py-2">
+                    זכית! 🎉
                   </Badge>
                 </CardContent>
               </Card>

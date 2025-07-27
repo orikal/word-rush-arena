@@ -28,12 +28,12 @@ const StatsSection = () => {
 
   return (
     <section className="py-24 px-6 bg-gradient-to-b from-card to-background">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold mb-6 bg-gradient-accent bg-clip-text text-transparent">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-accent bg-clip-text text-transparent">
             הסטטיסטיקות שלך
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             עקבו אחר ההתקדמות, ההישגים וההיסטוריה שלכם במשחק
           </p>
         </div>
