@@ -2,8 +2,11 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, Coins, Trophy, Settings, Users, Zap } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 const HomeScreen = () => {
+  const navigate = useNavigate()
+
   return (
     <section className="py-12 px-4 bg-gradient-to-b from-background to-card min-h-screen">
       <div className="max-w-md mx-auto">
@@ -21,7 +24,7 @@ const HomeScreen = () => {
             <Trophy className="w-5 h-5 text-gaming-purple" />
             <span className="font-bold text-gaming-purple">47</span>
           </div>
-          <Button variant="ghost" size="sm" className="p-2">
+          <Button variant="ghost" size="sm" className="p-2" onClick={() => navigate('/settings')}>
             <Settings className="w-5 h-5" />
           </Button>
         </div>
@@ -65,11 +68,11 @@ const HomeScreen = () => {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <Button variant="hero" className="h-16 flex-col gap-2">
+          <Button variant="hero" className="h-16 flex-col gap-2" onClick={() => navigate('/gameplay')}>
             <Zap className="w-6 h-6" />
             <span>שחק עכשיו</span>
           </Button>
-          <Button variant="gaming" className="h-16 flex-col gap-2">
+          <Button variant="gaming" className="h-16 flex-col gap-2" onClick={() => navigate('/challenge-friend')}>
             <Users className="w-6 h-6" />
             <span>אתגר חבר</span>
           </Button>
@@ -91,7 +94,7 @@ const HomeScreen = () => {
               <div className="text-xs text-muted-foreground">
                 זמן נותר: 8:32:15
               </div>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" onClick={() => navigate('/gameplay')}>
                 התחל
               </Button>
             </div>
