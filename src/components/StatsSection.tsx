@@ -4,10 +4,8 @@ import { Trophy, Clock, Target, Zap, Medal, Star } from "lucide-react"
 
 const StatsSection = () => {
   const gameHistory = [
-    { opponent: "דני123", category: "סרטים", result: "ניצחון", timeLeft: "12s", date: "היום" },
-    { opponent: "שרה_מלכה", category: "שירים", result: "הפסד", timeLeft: "0s", date: "אמש" },
-    { opponent: "גיימר_פרו", category: "ספרים", result: "ניצחון", timeLeft: "8s", date: "אתמול" },
-    { opponent: "מלך_המילים", category: "סרטים", result: "ניצחון", timeLeft: "15s", date: "לפני יומיים" }
+    { opponent: "חבר_1", category: "סרטים", result: "ניצחון", timeLeft: "12s", date: "היום" },
+    { opponent: "חבר_2", category: "שירים", result: "הפסד", timeLeft: "0s", date: "אמש" }
   ]
 
   const achievements = [
@@ -168,19 +166,7 @@ const StatsSection = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 rounded-lg bg-gaming-orange/20 border border-gaming-orange/30">
-                <div className="text-2xl mb-2">🥇</div>
-                <div className="font-bold">מלך_המילים</div>
-                <div className="text-sm text-muted-foreground">127 ניצחונות</div>
-              </div>
-              
-              <div className="text-center p-4 rounded-lg bg-gaming-green/20 border border-gaming-green/30">
-                <div className="text-2xl mb-2">🥈</div>
-                <div className="font-bold">שרה_מלכה</div>
-                <div className="text-sm text-muted-foreground">98 ניצחונות</div>
-              </div>
-              
+            <div className="grid grid-cols-1 gap-4">
               <div className="text-center p-4 rounded-lg bg-gaming-cyan/20 border border-gaming-cyan/30">
                 <div className="text-2xl mb-2">🥉</div>
                 <div className="font-bold text-gaming-cyan">את/ה</div>

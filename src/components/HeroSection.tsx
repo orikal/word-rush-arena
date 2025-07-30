@@ -95,25 +95,6 @@ const HeroSection = () => {
           </div>
         </div>
         
-        {/* CTA Button */}
-        <div className="flex justify-center animate-slide-up" style={{ animationDelay: '0.6s' }}>
-          <Button variant="hero" size="xl" className="w-full max-w-xs text-lg py-4">
-            שחק עכשיו בחינם 🎮
-          </Button>
-        </div>
-        
-        {/* Interactive Demo Preview */}
-        <div className="mt-12 animate-slide-up" style={{ animationDelay: '0.9s' }}>
-          <div className="bg-card/10 backdrop-blur-md rounded-xl p-6 border border-gaming-purple/30 max-w-sm mx-auto">
-            <p className="text-sm text-muted-foreground mb-3">הדגמה אינטראקטיבית:</p>
-            <div className="bg-gaming-purple/20 rounded-lg p-4 mb-3">
-              <p className="text-2xl font-bold text-center text-gaming-cyan animate-pulse">
-                ק ו ר ח ב
-              </p>
-            </div>
-            <p className="text-xs text-muted-foreground text-center">המילה: "חבוק" ← זמן: 42 שניות</p>
-          </div>
-        </div>
       </div>
     </section>
   )
