@@ -25,12 +25,14 @@ const GamePlay = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (timeLeft > 0) {
+      if (currentPlayer === 1 && timeLeft > 0) {
         setTimeLeft(timeLeft - 1)
+      } else if (currentPlayer === 2 && opponentTime > 0) {
+        setOpponentTime(opponentTime - 1)
       }
     }, 1000)
     return () => clearInterval(timer)
-  }, [timeLeft])
+  }, [timeLeft, opponentTime, currentPlayer])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
