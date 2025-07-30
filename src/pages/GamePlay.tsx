@@ -6,11 +6,22 @@ import { Progress } from "@/components/ui/progress"
 import { ArrowRight, SkipForward, Clock } from "lucide-react"
 
 const GamePlay = () => {
-  const [scrambledWord, setScrambledWord] = useState("ץרא")
+  const wordsData = [
+    { scrambled: "ץרא", correct: "ארץ", hint: "סרט ישראלי משנות ה-80" },
+    { scrambled: "םולח", correct: "חלום", hint: "דבר שקורה בלילה" },
+    { scrambled: "תיב", correct: "בית", hint: "מקום מגורים" },
+    { scrambled: "רבח", correct: "חבר", hint: "אדם קרוב" },
+    { scrambled: "עדי", correct: "ידע", hint: "מידע שלמדת" }
+  ]
+
+  const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [userAnswer, setUserAnswer] = useState("")
   const [timeLeft, setTimeLeft] = useState(45)
   const [opponentTime, setOpponentTime] = useState(38)
   const [currentCategory] = useState("סרטים")
+  const [currentPlayer, setCurrentPlayer] = useState(1) // 1 = אתה, 2 = יריב
+  const [feedback, setFeedback] = useState("")
+  const [isBlinking, setIsBlinking] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -25,6 +36,45 @@ const GamePlay = () => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const currentWord = wordsData[currentWordIndex]
+
+  const handleCorrectAnswer = () => {
+    if (userAnswer.trim() === currentWord.correct) {
+      setFeedback("תשובה נכונה!")
+      setUserAnswer("")
+      // מעבר תור ליריב
+      setCurrentPlayer(currentPlayer === 1 ? 2 : 1)
+      
+      setTimeout(() => {
+        setFeedback("")
+        // החלפת מילה
+        setCurrentWordIndex((prev) => (prev + 1) % wordsData.length)
+      }, 2000)
+    } else {
+      setFeedback("תשובה שגויה, נסה שוב")
+      setTimeout(() => setFeedback(""), 2000)
+    }
+  }
+
+  const handleSkip = () => {
+    setFeedback("דילוג")
+    setIsBlinking(true)
+    
+    // גזירת 3 שניות מהזמן
+    if (currentPlayer === 1) {
+      setTimeLeft(prev => Math.max(0, prev - 3))
+    } else {
+      setOpponentTime(prev => Math.max(0, prev - 3))
+    }
+
+    setTimeout(() => {
+      setFeedback("")
+      setIsBlinking(false)
+      // החלפת מילה לאותו שחקן
+      setCurrentWordIndex((prev) => (prev + 1) % wordsData.length)
+    }, 3000)
   }
 
   return (
@@ -63,15 +113,33 @@ const GamePlay = () => {
           </Card>
         </div>
 
+        {/* Feedback Display */}
+        {feedback && (
+          <Card className="mb-4 bg-gaming-green/10 border-gaming-green/50">
+            <CardContent className="p-4 text-center">
+              <div className="text-lg font-bold text-gaming-green">{feedback}</div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Current Player Indicator */}
+        <Card className="mb-4 bg-gaming-cyan/10 border-gaming-cyan/50">
+          <CardContent className="p-3 text-center">
+            <div className="text-sm font-medium">
+              {currentPlayer === 1 ? "התור שלך!" : "תור היריב"}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Scrambled Word Display */}
         <Card className="mb-8 bg-gradient-primary/10">
           <CardContent className="p-8 text-center">
             <div className="text-sm text-muted-foreground mb-4">פתור את המילה המעורבבת:</div>
-            <div className="text-5xl font-bold mb-6 tracking-widest text-gaming-orange animate-pulse">
-              {scrambledWord}
+            <div className={`text-5xl font-bold mb-6 tracking-widest text-gaming-orange ${isBlinking ? 'animate-pulse' : ''}`}>
+              {currentWord.scrambled}
             </div>
             <div className="text-sm text-muted-foreground">
-              רמז: סרט ישראלי משנות ה-80
+              רמז: {currentWord.hint}
             </div>
           </CardContent>
         </Card>
@@ -97,14 +165,20 @@ const GamePlay = () => {
 
         {/* Action Buttons */}
         <div className="space-y-4">
-          <Button className="w-full h-14 text-lg bg-gaming-green hover:bg-gaming-green/80">
+          <Button 
+            onClick={handleCorrectAnswer}
+            disabled={currentPlayer !== 1 || !userAnswer.trim()}
+            className="w-full h-14 text-lg bg-gaming-green hover:bg-gaming-green/80 disabled:opacity-50"
+          >
             <ArrowRight className="w-5 h-5 ml-2" />
             שלח תשובה
           </Button>
           
           <Button 
+            onClick={handleSkip}
+            disabled={currentPlayer !== 1}
             variant="outline" 
-            className="w-full h-12 border-gaming-orange text-gaming-orange hover:bg-gaming-orange/10"
+            className="w-full h-12 border-gaming-orange text-gaming-orange hover:bg-gaming-orange/10 disabled:opacity-50"
           >
             <SkipForward className="w-5 h-5 ml-2" />
             דלג (-3 שניות)
