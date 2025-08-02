@@ -1,10 +1,20 @@
 import { Button } from "@/components/ui/button"
 import heroBg from "@/assets/hero-bg.jpg"
 import { Clock, Zap, Trophy, Users } from "lucide-react"
+import UserProfile from "./UserProfile"
+import { useAuth } from "@/hooks/useAuth"
 
 const HeroSection = () => {
+  const { user } = useAuth();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* User Profile - Top Right */}
+      {user && (
+        <div className="absolute top-6 right-6 z-20">
+          <UserProfile />
+        </div>
+      )}
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
