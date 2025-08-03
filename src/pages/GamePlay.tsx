@@ -6,21 +6,28 @@ import { Progress } from "@/components/ui/progress"
 import { ArrowRight, SkipForward, Clock } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import UserProfile from "@/components/UserProfile"
+import { useLocation } from "react-router-dom"
 
 const GamePlay = () => {
-  const wordsData = [
+  const location = useLocation();
+  const { state } = location || {};
+  const selectedCategory = state?.category;
+  
+  const defaultWords = [
     { scrambled: "ץרא", correct: "ארץ", hint: "סרט ישראלי משנות ה-80" },
     { scrambled: "םולח", correct: "חלום", hint: "דבר שקורה בלילה" },
     { scrambled: "תיב", correct: "בית", hint: "מקום מגורים" },
     { scrambled: "רבח", correct: "חבר", hint: "אדם קרוב" },
     { scrambled: "עדי", correct: "ידע", hint: "מידע שלמדת" }
-  ]
+  ];
+
+  const wordsData = selectedCategory?.words || defaultWords;
 
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [userAnswer, setUserAnswer] = useState("")
   const [timeLeft, setTimeLeft] = useState(45)
   const [opponentTime, setOpponentTime] = useState(38)
-  const [currentCategory] = useState("סרטים")
+  const [currentCategory] = useState(selectedCategory?.name || "כללי")
   const [currentPlayer, setCurrentPlayer] = useState(1) // 1 = אתה, 2 = יריב
   const [feedback, setFeedback] = useState("")
   const [isBlinking, setIsBlinking] = useState(false)

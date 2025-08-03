@@ -1,8 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Star, Coins, Trophy, Settings, Users, Zap } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { Star, Coins, Trophy, Settings, Users, Zap, Gamepad } from "lucide-react"
+import { useNavigate, Link } from "react-router-dom"
 
 const HomeScreen = () => {
   const navigate = useNavigate()
@@ -67,15 +67,34 @@ const HomeScreen = () => {
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <Button variant="hero" className="h-16 flex-col gap-2" onClick={() => navigate('/gameplay')}>
-            <Zap className="w-6 h-6" />
-            <span>שחק עכשיו</span>
-          </Button>
-          <Button variant="gaming" className="h-16 flex-col gap-2" onClick={() => navigate('/challenge-friend')}>
-            <Users className="w-6 h-6" />
-            <span>אתגר חבר</span>
-          </Button>
+        <div className="grid grid-cols-1 gap-4 mb-8">
+          <Card className="bg-gaming-green/10 border-gaming-green/50 hover:bg-gaming-green/20 transition-colors cursor-pointer">
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-gaming-green/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Gamepad className="w-8 h-8 text-gaming-green" />
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-foreground">משחק נגד המחשב</h3>
+              <p className="text-muted-foreground mb-4">
+                תרגל ושפר את כישורי המילים שלך במשחק נגד בינה מלאכותית
+              </p>
+              <Link to="/categories">
+                <Button className="w-full bg-gaming-green hover:bg-gaming-green/80 text-white">
+                  בחר קטגוריה
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Button variant="hero" className="h-16 flex-col gap-2" onClick={() => navigate('/gameplay')}>
+              <Zap className="w-6 h-6" />
+              <span>משחק מהיר</span>
+            </Button>
+            <Button variant="gaming" className="h-16 flex-col gap-2" onClick={() => navigate('/challenge-friend')}>
+              <Users className="w-6 h-6" />
+              <span>אתגר חבר</span>
+            </Button>
+          </div>
         </div>
 
         {/* Daily Challenge */}
