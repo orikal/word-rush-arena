@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { ArrowRight, SkipForward, Clock } from "lucide-react"
+import { useAuth } from "@/hooks/useAuth"
+import UserProfile from "@/components/UserProfile"
 
 const GamePlay = () => {
   const wordsData = [
@@ -22,6 +24,7 @@ const GamePlay = () => {
   const [currentPlayer, setCurrentPlayer] = useState(1) // 1 = אתה, 2 = יריב
   const [feedback, setFeedback] = useState("")
   const [isBlinking, setIsBlinking] = useState(false)
+  const { user } = useAuth()
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -33,6 +36,34 @@ const GamePlay = () => {
     }, 1000)
     return () => clearInterval(timer)
   }, [timeLeft, opponentTime, currentPlayer])
+
+  // AI opponent logic
+  useEffect(() => {
+    if (currentPlayer === 2) {
+      const thinkingTime = Math.random() * 3000 + 2000 // 2-5 seconds thinking time
+      const timer = setTimeout(() => {
+        const shouldAnswer = Math.random() > 0.3 // 70% chance to answer correctly
+        
+        if (shouldAnswer) {
+          setFeedback("היריב ענה נכון!")
+          setTimeout(() => {
+            setFeedback("")
+            setCurrentPlayer(1)
+            setCurrentWordIndex((prev) => (prev + 1) % wordsData.length)
+          }, 2000)
+        } else {
+          setFeedback("היריב דילג")
+          setOpponentTime(prev => Math.max(0, prev - 3))
+          setTimeout(() => {
+            setFeedback("")
+            setCurrentWordIndex((prev) => (prev + 1) % wordsData.length)
+          }, 2000)
+        }
+      }, thinkingTime)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [currentPlayer, currentWordIndex])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -82,6 +113,13 @@ const GamePlay = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-card px-4 py-6">
       <div className="max-w-md mx-auto">
+        {/* User Profile Header */}
+        {user && (
+          <div className="mb-6">
+            <UserProfile />
+          </div>
+        )}
+        
         {/* Game Header */}
         <div className="text-center mb-6">
           <Badge className="bg-gaming-purple/20 text-gaming-purple border-gaming-purple/30 mb-2">
