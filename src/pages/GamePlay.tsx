@@ -24,9 +24,13 @@ const GamePlay = () => {
   const [currentPlayer, setCurrentPlayer] = useState(1) // 1 = אתה, 2 = יריב
   const [feedback, setFeedback] = useState("")
   const [isBlinking, setIsBlinking] = useState(false)
+  const [gameEnded, setGameEnded] = useState(false)
+  const [winner, setWinner] = useState<string | null>(null)
   const { user } = useAuth()
 
   useEffect(() => {
+    if (gameEnded) return
+    
     const timer = setInterval(() => {
       if (currentPlayer === 1 && timeLeft > 0) {
         setTimeLeft(timeLeft - 1)
@@ -35,11 +39,24 @@ const GamePlay = () => {
       }
     }, 1000)
     return () => clearInterval(timer)
-  }, [timeLeft, opponentTime, currentPlayer])
+  }, [timeLeft, opponentTime, currentPlayer, gameEnded])
+
+  // Check for game end when time runs out
+  useEffect(() => {
+    if (timeLeft === 0 && !gameEnded) {
+      setGameEnded(true)
+      setWinner("היריב")
+      setFeedback("נגמר הזמן! היריב ניצח!")
+    } else if (opponentTime === 0 && !gameEnded) {
+      setGameEnded(true)
+      setWinner("אתה")
+      setFeedback("נגמר הזמן ליריב! אתה ניצחת!")
+    }
+  }, [timeLeft, opponentTime, gameEnded])
 
   // AI opponent logic
   useEffect(() => {
-    if (currentPlayer === 2) {
+    if (currentPlayer === 2 && !gameEnded) {
       const thinkingTime = Math.random() * 3000 + 2000 // 2-5 seconds thinking time
       const timer = setTimeout(() => {
         const shouldAnswer = Math.random() > 0.3 // 70% chance to answer correctly
@@ -63,7 +80,7 @@ const GamePlay = () => {
       
       return () => clearTimeout(timer)
     }
-  }, [currentPlayer, currentWordIndex])
+  }, [currentPlayer, currentWordIndex, gameEnded])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -74,6 +91,8 @@ const GamePlay = () => {
   const currentWord = wordsData[currentWordIndex]
 
   const handleCorrectAnswer = () => {
+    if (gameEnded) return
+    
     if (userAnswer.trim() === currentWord.correct) {
       setFeedback("תשובה נכונה!")
       setUserAnswer("")
@@ -92,6 +111,8 @@ const GamePlay = () => {
   }
 
   const handleSkip = () => {
+    if (gameEnded) return
+    
     setFeedback("דילוג")
     setIsBlinking(true)
     
@@ -108,6 +129,18 @@ const GamePlay = () => {
       // החלפת מילה לאותו שחקן
       setCurrentWordIndex((prev) => (prev + 1) % wordsData.length)
     }, 3000)
+  }
+
+  const restartGame = () => {
+    setGameEnded(false)
+    setWinner(null)
+    setTimeLeft(45)
+    setOpponentTime(38)
+    setCurrentPlayer(1)
+    setCurrentWordIndex(0)
+    setUserAnswer("")
+    setFeedback("")
+    setIsBlinking(false)
   }
 
   return (
@@ -162,68 +195,96 @@ const GamePlay = () => {
           </Card>
         )}
 
+        {/* Game End Screen */}
+        {gameEnded && (
+          <Card className="mb-6 bg-gradient-to-r from-gaming-green/20 to-gaming-cyan/20 border-gaming-green/50">
+            <CardContent className="p-6 text-center">
+              <div className="text-3xl font-bold mb-4">
+                {winner === "אתה" ? "🎉 ניצחת! 🎉" : "😞 הפסדת 😞"}
+              </div>
+              <div className="text-lg mb-4 text-muted-foreground">
+                {feedback}
+              </div>
+              <Button 
+                onClick={restartGame}
+                className="bg-gaming-green hover:bg-gaming-green/80"
+              >
+                משחק חדש
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Current Player Indicator */}
-        <Card className="mb-4 bg-gaming-cyan/10 border-gaming-cyan/50">
-          <CardContent className="p-3 text-center">
-            <div className="text-sm font-medium">
-              {currentPlayer === 1 ? "התור שלך!" : "תור היריב"}
-            </div>
-          </CardContent>
-        </Card>
+        {!gameEnded && (
+          <Card className="mb-4 bg-gaming-cyan/10 border-gaming-cyan/50">
+            <CardContent className="p-3 text-center">
+              <div className="text-sm font-medium">
+                {currentPlayer === 1 ? "התור שלך!" : "תור היריב"}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Scrambled Word Display */}
-        <Card className="mb-8 bg-gradient-primary/10">
-          <CardContent className="p-8 text-center">
-            <div className="text-sm text-muted-foreground mb-4">פתור את המילה המעורבבת:</div>
-            <div className={`text-5xl font-bold mb-6 tracking-widest text-gaming-orange ${isBlinking ? 'animate-pulse' : ''}`}>
-              {currentWord.scrambled}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              רמז: {currentWord.hint}
-            </div>
-          </CardContent>
-        </Card>
+        {!gameEnded && (
+          <Card className="mb-8 bg-gradient-primary/10">
+            <CardContent className="p-8 text-center">
+              <div className="text-sm text-muted-foreground mb-4">פתור את המילה המעורבבת:</div>
+              <div className={`text-5xl font-bold mb-6 tracking-widest text-gaming-orange ${isBlinking ? 'animate-pulse' : ''}`}>
+                {currentWord.scrambled}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                רמז: {currentWord.hint}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Answer Input */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">התשובה שלך:</label>
-                <input 
-                  type="text"
-                  value={userAnswer}
-                  onChange={(e) => setUserAnswer(e.target.value)}
-                  className="w-full p-4 text-lg text-center border border-border rounded-lg bg-background focus:ring-2 focus:ring-gaming-cyan focus:border-transparent"
-                  placeholder="הקלד כאן..."
-                  dir="rtl"
-                />
+        {!gameEnded && (
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">התשובה שלך:</label>
+                  <input 
+                    type="text"
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    className="w-full p-4 text-lg text-center border border-border rounded-lg bg-background focus:ring-2 focus:ring-gaming-cyan focus:border-transparent"
+                    placeholder="הקלד כאן..."
+                    dir="rtl"
+                  />
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Action Buttons */}
-        <div className="space-y-4">
-          <Button 
-            onClick={handleCorrectAnswer}
-            disabled={currentPlayer !== 1 || !userAnswer.trim()}
-            className="w-full h-14 text-lg bg-gaming-green hover:bg-gaming-green/80 disabled:opacity-50"
-          >
-            <ArrowRight className="w-5 h-5 ml-2" />
-            שלח תשובה
-          </Button>
-          
-          <Button 
-            onClick={handleSkip}
-            disabled={currentPlayer !== 1}
-            variant="outline" 
-            className="w-full h-12 border-gaming-orange text-gaming-orange hover:bg-gaming-orange/10 disabled:opacity-50"
-          >
-            <SkipForward className="w-5 h-5 ml-2" />
-            דלג (-3 שניות)
-          </Button>
-        </div>
+        {!gameEnded && (
+          <div className="space-y-4">
+            <Button 
+              onClick={handleCorrectAnswer}
+              disabled={currentPlayer !== 1 || !userAnswer.trim()}
+              className="w-full h-14 text-lg bg-gaming-green hover:bg-gaming-green/80 disabled:opacity-50"
+            >
+              <ArrowRight className="w-5 h-5 ml-2" />
+              שלח תשובה
+            </Button>
+            
+            <Button 
+              onClick={handleSkip}
+              disabled={currentPlayer !== 1}
+              variant="outline" 
+              className="w-full h-12 border-gaming-orange text-gaming-orange hover:bg-gaming-orange/10 disabled:opacity-50"
+            >
+              <SkipForward className="w-5 h-5 ml-2" />
+              דלג (-3 שניות)
+            </Button>
+          </div>
+        )}
 
         {/* Game Instructions */}
         <Card className="mt-6 bg-muted/30">
