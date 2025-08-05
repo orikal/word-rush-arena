@@ -6,10 +6,12 @@ import { Progress } from "@/components/ui/progress"
 import { ArrowRight, SkipForward, Clock } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import UserProfile from "@/components/UserProfile"
-import { useLocation } from "react-router-dom"
+import LuckyWheel from "@/components/LuckyWheel"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const GamePlay = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { state } = location || {};
   const selectedCategory = state?.category;
   
@@ -33,6 +35,7 @@ const GamePlay = () => {
   const [isBlinking, setIsBlinking] = useState(false)
   const [gameEnded, setGameEnded] = useState(false)
   const [winner, setWinner] = useState<string | null>(null)
+  const [showWheel, setShowWheel] = useState(false)
   const { user } = useAuth()
 
   useEffect(() => {
@@ -58,6 +61,7 @@ const GamePlay = () => {
       setGameEnded(true)
       setWinner("אתה")
       setFeedback("נגמר הזמן ליריב! אתה ניצחת!")
+      setShowWheel(true) // Show wheel when player wins
     }
   }, [timeLeft, opponentTime, gameEnded])
 
@@ -148,6 +152,11 @@ const GamePlay = () => {
     setUserAnswer("")
     setFeedback("")
     setIsBlinking(false)
+    setShowWheel(false)
+  }
+
+  const handlePrizeWon = (prize: any) => {
+    console.log('Prize won:', prize)
   }
 
   return (
@@ -212,12 +221,21 @@ const GamePlay = () => {
               <div className="text-lg mb-4 text-muted-foreground">
                 {feedback}
               </div>
-              <Button 
-                onClick={restartGame}
-                className="bg-gaming-green hover:bg-gaming-green/80"
-              >
-                משחק חדש
-              </Button>
+              <div className="space-y-4">
+                <Button 
+                  onClick={restartGame}
+                  className="bg-gaming-green hover:bg-gaming-green/80"
+                >
+                  משחק חדש
+                </Button>
+                <Button 
+                  onClick={() => navigate('/')}
+                  variant="outline"
+                  className="border-gaming-orange text-gaming-orange hover:bg-gaming-orange/10"
+                >
+                  חזור לעמוד הראשי
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -303,6 +321,13 @@ const GamePlay = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Lucky Wheel - Show only when player wins */}
+        {showWheel && winner === "אתה" && (
+          <div className="mt-8">
+            <LuckyWheel canSpin={true} onPrizeWon={handlePrizeWon} />
+          </div>
+        )}
       </div>
     </div>
   )

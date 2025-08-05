@@ -9,6 +9,7 @@ import GamePlay from "./pages/GamePlay";
 import ChallengeFriend from "./pages/ChallengeFriend";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Auth from "./pages/Auth";
 import CategorySelector from "./components/CategorySelector";
 
 const queryClient = new QueryClient();
@@ -23,7 +24,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/categories" element={<CategorySelector />} />
           <Route path="/gameplay" element={<GamePlay />} />
-          <Route path="/challenge-friend" element={<ChallengeFriend />} />
+          <Route path="/challenge" element={<ChallengeFriend />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

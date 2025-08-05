@@ -1,11 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Star, Coins, Trophy, Settings, Users, Zap, Gamepad } from "lucide-react"
+import { Star, Coins, Trophy, Settings, Users, Zap, Gamepad, LogIn, LogOut } from "lucide-react"
 import { useNavigate, Link } from "react-router-dom"
+import { useAuth } from "@/hooks/useAuth"
 
 const HomeScreen = () => {
   const navigate = useNavigate()
+  const { user, signOut } = useAuth()
 
   return (
     <section className="py-12 px-4 bg-gradient-to-b from-background to-card min-h-screen">
@@ -24,9 +26,20 @@ const HomeScreen = () => {
             <Trophy className="w-5 h-5 text-gaming-purple" />
             <span className="font-bold text-gaming-purple">47</span>
           </div>
-          <Button variant="ghost" size="sm" className="p-2" onClick={() => navigate('/settings')}>
-            <Settings className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="p-2" onClick={() => navigate('/settings')}>
+              <Settings className="w-5 h-5" />
+            </Button>
+            {user ? (
+              <Button variant="ghost" size="sm" className="p-2" onClick={() => signOut()}>
+                <LogOut className="w-5 h-5" />
+              </Button>
+            ) : (
+              <Button variant="ghost" size="sm" className="p-2" onClick={() => navigate('/auth')}>
+                <LogIn className="w-5 h-5" />
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Character Scene */}
@@ -90,7 +103,7 @@ const HomeScreen = () => {
               <Zap className="w-6 h-6" />
               <span>משחק מהיר</span>
             </Button>
-            <Button variant="gaming" className="h-16 flex-col gap-2" onClick={() => navigate('/challenge-friend')}>
+            <Button variant="gaming" className="h-16 flex-col gap-2" onClick={() => navigate('/challenge')}>
               <Users className="w-6 h-6" />
               <span>אתגר חבר</span>
             </Button>

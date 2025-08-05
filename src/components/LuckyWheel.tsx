@@ -4,7 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { RotateCcw, Trophy, Gift, Unlock, Palette, Zap } from "lucide-react"
 
-const LuckyWheel = () => {
+interface LuckyWheelProps {
+  canSpin?: boolean;
+  onPrizeWon?: (prize: any) => void;
+}
+
+const LuckyWheel = ({ canSpin = false, onPrizeWon }: LuckyWheelProps) => {
   const [isSpinning, setIsSpinning] = useState(false)
   const [lastPrize, setLastPrize] = useState(null)
 
@@ -18,12 +23,17 @@ const LuckyWheel = () => {
   ]
 
   const handleSpin = () => {
+    if (!canSpin) {
+      return;
+    }
+    
     setIsSpinning(true)
     
     setTimeout(() => {
       const randomPrize = prizes[Math.floor(Math.random() * prizes.length)]
       setLastPrize(randomPrize)
       setIsSpinning(false)
+      onPrizeWon?.(randomPrize)
     }, 3000)
   }
 
@@ -85,12 +95,12 @@ const LuckyWheel = () => {
             <div className="mt-8">
               <Button 
                 onClick={handleSpin}
-                disabled={isSpinning}
+                disabled={isSpinning || !canSpin}
                 variant="hero"
                 size="xl"
                 className="w-full max-w-xs"
               >
-                {isSpinning ? "מסתובב..." : "סובב את הגלגל!"}
+                {isSpinning ? "מסתובב..." : canSpin ? "סובב את הגלגל!" : "נצח במשחק כדי לסובב!"}
               </Button>
             </div>
           </div>
