@@ -1,185 +1,354 @@
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Users, Share2, Search, Crown, Trophy, Star } from "lucide-react"
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Film, Tv, Gamepad, Trophy, Mic, Star, Laugh, Search, Users, Zap, Share2, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const ChallengeFriend = () => {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("כל הקטגוריות")
+interface Category {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  color: string;
+  words: Array<{ scrambled: string; correct: string; hint: string }>;
+}
 
-  const categories = [
-    "כל הקטגוריות", "סרטים", "שירים", "ספרים", "דמויות", "ציוד משרדי", "חיות"
-  ]
+interface Friend {
+  id: string;
+  name: string;
+  avatar: string;
+  level: number;
+  wins: number;
+  isOnline: boolean;
+}
 
-  const friends = [
-    { id: 1, name: "דני כהן", avatar: "👨‍💻", level: 15, wins: 28, isOnline: true },
-    { id: 2, name: "מיכל לוי", avatar: "👩‍🎨", level: 12, wins: 22, isOnline: false },
-    { id: 3, name: "אמיר ברק", avatar: "🧙‍♂️", level: 18, wins: 35, isOnline: true },
-    { id: 4, name: "רותי גולד", avatar: "🦄", level: 9, wins: 15, isOnline: true }
-  ]
+interface OnlinePlayer {
+  id: string;
+  name: string;
+  avatar: string;
+  level: number;
+  rating: number;
+}
 
-  const onlinePlayers = [
-    { id: 5, name: "אלכס_המלך", avatar: "👑", level: 22, rating: 1850, isOnline: true },
-    { id: 6, name: "WordMaster", avatar: "🎯", level: 19, rating: 1720, isOnline: true },
-    { id: 7, name: "חכם_המילים", avatar: "🧠", level: 16, rating: 1650, isOnline: true }
-  ]
+const categories: Category[] = [
+  {
+    id: 'movies',
+    name: 'סרטים',
+    icon: <Film className="w-4 h-4" />,
+    color: 'bg-red-500',
+    words: [
+      { scrambled: "ץרא", correct: "ארץ", hint: "סרט ישראלי קלאסי" }
+    ]
+  },
+  {
+    id: 'series',
+    name: 'סדרות',
+    icon: <Tv className="w-4 h-4" />,
+    color: 'bg-blue-500',
+    words: []
+  },
+  {
+    id: 'games',
+    name: 'משחקים',
+    icon: <Gamepad className="w-4 h-4" />,
+    color: 'bg-green-500',
+    words: []
+  },
+  {
+    id: 'sports',
+    name: 'ספורט',
+    icon: <Trophy className="w-4 h-4" />,
+    color: 'bg-yellow-500',
+    words: []
+  },
+  {
+    id: 'singers',
+    name: 'זמרים',
+    icon: <Mic className="w-4 h-4" />,
+    color: 'bg-purple-500',
+    words: []
+  },
+  {
+    id: 'celebs',
+    name: 'סלבס',
+    icon: <Star className="w-4 h-4" />,
+    color: 'bg-pink-500',
+    words: []
+  },
+  {
+    id: 'comedians',
+    name: 'סטנדאפיסטים',
+    icon: <Laugh className="w-4 h-4" />,
+    color: 'bg-orange-500',
+    words: []
+  }
+];
+
+const friends: Friend[] = [
+  {
+    id: '1',
+    name: 'דני כהן',
+    avatar: '/placeholder.svg',
+    level: 15,
+    wins: 42,
+    isOnline: true
+  },
+  {
+    id: '2', 
+    name: 'מיכל לוי',
+    avatar: '/placeholder.svg',
+    level: 12,
+    wins: 38,
+    isOnline: false
+  },
+  {
+    id: '3',
+    name: 'יוסי מור',
+    avatar: '/placeholder.svg', 
+    level: 18,
+    wins: 51,
+    isOnline: true
+  }
+];
+
+const onlinePlayers: OnlinePlayer[] = [
+  {
+    id: '1',
+    name: 'שירה ברק',
+    avatar: '/placeholder.svg',
+    level: 22,
+    rating: 1420
+  },
+  {
+    id: '2',
+    name: 'אור שמש',
+    avatar: '/placeholder.svg',
+    level: 16,
+    rating: 1280
+  },
+  {
+    id: '3',
+    name: 'נועה דור',
+    avatar: '/placeholder.svg',
+    level: 19,
+    rating: 1350
+  }
+];
+
+export default function ChallengeFriend() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const navigate = useNavigate();
+
+  const handleChallengePlayer = (playerId: string, isQuickMatch = false) => {
+    if (!selectedCategory) {
+      alert('אנא בחר קטגוריה תחילה');
+      return;
+    }
+    // Navigate to game with selected category and opponent
+    navigate('/gameplay', { 
+      state: { 
+        category: selectedCategory, 
+        opponent: isQuickMatch ? 'quick_match' : playerId,
+        isMultiplayer: true
+      } 
+    });
+  };
+
+  const filteredFriends = friends.filter(friend =>
+    friend.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-card px-4 py-6">
-      <div className="max-w-md mx-auto">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
-            <Users className="w-6 h-6 text-gaming-cyan" />
-            אתגר חבר
-          </h1>
-          <p className="text-muted-foreground">בחר יריב וקטגוריה להתחלת משחק</p>
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold mb-2">אתגר חבר</h1>
+          <p className="text-muted-foreground">בחר קטגוריה ואתגר חברים למשחק!</p>
         </div>
 
         {/* Category Selection */}
         <Card className="mb-6">
-          <CardContent className="p-4">
-            <h3 className="font-semibold mb-3 text-gaming-purple">בחר קטגוריה:</h3>
-            <div className="flex flex-wrap gap-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Gamepad className="w-5 h-5" />
+              בחירת קטגוריה
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {categories.map((category) => (
-                <Badge
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  className={`cursor-pointer transition-colors ${
-                    selectedCategory === category 
-                      ? "bg-gaming-purple text-white" 
-                      : "hover:bg-gaming-purple/20"
+                <Button
+                  key={category.id}
+                  variant={selectedCategory?.id === category.id ? "default" : "outline"}
+                  className={`h-auto p-4 flex flex-col items-center gap-2 ${
+                    selectedCategory?.id === category.id 
+                      ? 'bg-gaming-cyan hover:bg-gaming-cyan/80 text-white border-gaming-cyan' 
+                      : 'hover:bg-gaming-cyan/10 hover:border-gaming-cyan/50'
                   }`}
                   onClick={() => setSelectedCategory(category)}
                 >
-                  {category}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Search Friends */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="relative">
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="חפש חבר..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10"
-                dir="rtl"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Friends List */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-gaming-green" />
-              החברים שלי
-            </h3>
-            <div className="space-y-3">
-              {friends
-                .filter(friend => friend.name.includes(searchQuery))
-                .map((friend) => (
-                <div key={friend.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <div className="w-12 h-12 rounded-full bg-gaming-cyan/20 flex items-center justify-center text-xl">
-                        {friend.avatar}
-                      </div>
-                      {friend.isOnline && (
-                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-gaming-green rounded-full border-2 border-background"></div>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium">{friend.name}</p>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>רמה {friend.level}</span>
-                        <span>•</span>
-                        <span>{friend.wins} ניצחונות</span>
-                      </div>
-                    </div>
+                  <div className={`w-8 h-8 ${category.color} rounded-full flex items-center justify-center text-white`}>
+                    {category.icon}
                   </div>
-                  <Button 
-                    size="sm" 
-                    className={friend.isOnline ? "bg-gaming-green hover:bg-gaming-green/80" : ""}
-                    disabled={!friend.isOnline}
-                  >
-                    {friend.isOnline ? "אתגר" : "לא זמין"}
-                  </Button>
-                </div>
+                  <span className="text-sm font-medium">{category.name}</span>
+                </Button>
               ))}
             </div>
+            {selectedCategory && (
+              <div className="mt-4 p-3 bg-gaming-cyan/10 rounded-lg">
+                <p className="text-sm text-center font-medium">
+                  נבחרה קטגוריית {selectedCategory.name} ✓
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Random Players */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <Crown className="w-5 h-5 text-gaming-orange" />
-              שחקנים מקוונים
-            </h3>
-            <div className="space-y-3">
-              {onlinePlayers.map((player) => (
-                <div key={player.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <div className="w-12 h-12 rounded-full bg-gaming-orange/20 flex items-center justify-center text-xl">
-                        {player.avatar}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Friends Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                החברים שלי
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="חפש חברים..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {filteredFriends.map((friend) => (
+                  <div key={friend.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src={friend.avatar} alt={friend.name} />
+                        <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{friend.name}</span>
+                          <div className={`w-2 h-2 rounded-full ${friend.isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          רמה {friend.level} • {friend.wins} נצחונות
+                        </div>
                       </div>
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-gaming-green rounded-full border-2 border-background"></div>
                     </div>
-                    <div>
-                      <p className="font-medium">{player.name}</p>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Star className="w-3 h-3" />
-                        <span>{player.rating}</span>
-                        <span>•</span>
-                        <span>רמה {player.level}</span>
-                      </div>
-                    </div>
+                    <Button
+                      size="sm"
+                      disabled={!friend.isOnline || !selectedCategory}
+                      onClick={() => handleChallengePlayer(friend.id)}
+                      className="bg-gaming-green hover:bg-gaming-green/80"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
                   </div>
-                  <Button size="sm" className="bg-gaming-orange hover:bg-gaming-orange/80">
-                    אתגר
-                  </Button>
+                ))}
+                {filteredFriends.length === 0 && (
+                  <p className="text-center text-muted-foreground py-4">
+                    לא נמצאו חברים
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Online Players & Quick Match */}
+          <div className="space-y-6">
+            {/* Quick Match */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5" />
+                  משחק מהיר
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-muted-foreground mb-4">
+                  מצא יריב אקראי למשחק מהיר
+                </p>
+                <Button
+                  className="w-full bg-gaming-orange hover:bg-gaming-orange/80"
+                  disabled={!selectedCategory}
+                  onClick={() => handleChallengePlayer('quick_match', true)}
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  משחק מהיר
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Online Players */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  שחקנים מחוברים
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 max-h-48 overflow-y-auto">
+                  {onlinePlayers.map((player) => (
+                    <div key={player.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-8 h-8">
+                          <AvatarImage src={player.avatar} alt={player.name} />
+                          <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium text-sm">{player.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            רמה {player.level} • דירוג {player.rating}
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={!selectedCategory}
+                        onClick={() => handleChallengePlayer(player.id)}
+                      >
+                        אתגר
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Quick Match */}
-        <Card className="bg-gradient-primary/10 border-gaming-cyan/50">
-          <CardContent className="p-6 text-center">
-            <Trophy className="w-12 h-12 mx-auto mb-4 text-gaming-cyan" />
-            <h3 className="font-bold text-gaming-cyan mb-2">התאמה מהירה</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              מצא יריב בדירוג דומה תוך שניות
-            </p>
-            <Button className="w-full bg-gaming-cyan hover:bg-gaming-cyan/80">
-              חפש משחק מהיר
-            </Button>
-          </CardContent>
-        </Card>
+            {/* Share */}
+            <Card>
+              <CardContent className="p-4 text-center">
+                <Button variant="outline" className="w-full">
+                  <Share2 className="w-4 h-4 mr-2" />
+                  הזמן חברים לשחק
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
-        {/* Share Button */}
-        <div className="mt-6 text-center">
-          <Button variant="outline" className="w-full">
-            <Share2 className="w-4 h-4 ml-2" />
-            הזמן חברים למשחק
+        <div className="mt-8 text-center">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/')}
+            className="border-gaming-orange text-gaming-orange hover:bg-gaming-orange/10"
+          >
+            חזור לעמוד הראשי
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
-export default ChallengeFriend

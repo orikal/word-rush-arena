@@ -24,7 +24,12 @@ const categories: Category[] = [
       { scrambled: "ךותי", correct: "יתוך", hint: "סרט ישראלי מפורסם" },
       { scrambled: "ןמקטב", correct: "בטמן", hint: "גיבור על בלבד" },
       { scrambled: "ןטאייט", correct: "טיטאניק", hint: "ספינה שטבעה" },
-      { scrambled: "הקירמ", correct: "אמריקה", hint: "יבשת" }
+      { scrambled: "הקירמ", correct: "אמריקה", hint: "יבשת" },
+      { scrambled: "ףואל", correct: "לואף", hint: "סרט אנימציה פופולרי" },
+      { scrambled: "ןיאר", correct: "איירן", hint: "גיבור על עשיר" },
+      { scrambled: "ךיראה", correct: "הארי", hint: "קוסם צעיר" },
+      { scrambled: "רצוי", correct: "יוצר", hint: "סרט מדע בדיוני" },
+      { scrambled: "ץפש", correct: "שפץ", hint: "סרט קומדיה ישראלי" }
     ]
   },
   {
@@ -37,7 +42,12 @@ const categories: Category[] = [
       { scrambled: "זגנירב", correct: "ברינגס", hint: "סדרה על כימיה" },
       { scrambled: "םיצח", correct: "חיים", hint: "סדרה ישראלית מפורסמת" },
       { scrambled: "דרוקר", correct: "רקורד", hint: "סדרה על עיתונאים" },
-      { scrambled: "השמ", correct: "משה", hint: "דמות מקראית" }
+      { scrambled: "השמ", correct: "משה", hint: "דמות מקראית" },
+      { scrambled: "סונייז", correct: "זיינוס", hint: "סדרה אמריקאית פופולרית" },
+      { scrambled: "דירנמ", correct: "רמיند", hint: "סדרה על פסיכולוג" },
+      { scrambled: "סעונ", correct: "נועס", hint: "סדרה ישראלית" },
+      { scrambled: "סיובמ", correct: "במביס", hint: "סדרה אנימציה" },
+      { scrambled: "רלכא", correct: "לארכ", hint: "סדרה ישראלית מפורסמת" }
     ]
   },
   {
@@ -50,7 +60,12 @@ const categories: Category[] = [
       { scrambled: "ףרקטנימ", correct: "מיינקראפט", hint: "משחק בנייה בקוביות" },
       { scrambled: "איפ", correct: "פיפא", hint: "משחק כדורגל" },
       { scrambled: "לגול", correct: "גולל", hint: "פלטפורמת משחקים" },
-      { scrambled: "סלגיג", correct: "גליגס", hint: "משחק פעילות" }
+      { scrambled: "סלגיג", correct: "גליגס", hint: "משחק פעילות" },
+      { scrambled: "ףואל", correct: "לואף", hint: "משחק מירוצים" },
+      { scrambled: "איד", correct: "דיא", hint: "משחק אקשן" },
+      { scrambled: "סוקח", correct: "חוקס", hint: "משחק חשיבה" },
+      { scrambled: "קפמ", correct: "פקמ", hint: "משחק קרב" },
+      { scrambled: "זלכ", correct: "לכז", hint: "משחק אסטרטגיה" }
     ]
   },
   {
@@ -63,7 +78,12 @@ const categories: Category[] = [
       { scrambled: "לסב", correct: "סל", hint: "משחק עם סל וכדור" },
       { scrambled: "סינט", correct: "טניס", hint: "משחק עם רקט" },
       { scrambled: "היוש", correct: "שחייה", hint: "ספורט במים" },
-      { scrambled: "ץור", correct: "רוץ", hint: "ספורט מהיר" }
+      { scrambled: "ץור", correct: "רוץ", hint: "ספורט מהיר" },
+      { scrambled: "לובקכ", correct: "כדורקל", hint: "משחק אמריקאי" },
+      { scrambled: "ךוב", correct: "בוק", hint: "ספורט קרב" },
+      { scrambled: "יכס", correct: "סקי", hint: "ספורט חורף" },
+      { scrambled: "ףוגר", correct: "גולף", hint: "משחק עם כדור לבן" },
+      { scrambled: "יגוריא", correct: "איגרוף", hint: "ספורט קרב עם כפפות" }
     ]
   },
   {
@@ -76,7 +96,12 @@ const categories: Category[] = [
       { scrambled: "הינש", correct: "שינה", hint: "זמרת ישראלית" },
       { scrambled: "ןואה", correct: "אוהן", hint: "זמר בינלאומי" },
       { scrambled: "הדומ", correct: "מודה", hint: "זמרת פופ" },
-      { scrambled: "ביבא", correct: "אביב", hint: "זמר ישראלי" }
+      { scrambled: "ביבא", correct: "אביב", hint: "זמר ישראלי" },
+      { scrambled: "הנאיר", correct: "ריאנה", hint: "זמרת פופ בינלאומית" },
+      { scrambled: "יוד", correct: "דוי", hint: "זמר ישראלי מפורסם" },
+      { scrambled: "הנדומ", correct: "מדונה", hint: "מלכת הפופ" },
+      { scrambled: "ריבס", correct: "בירס", hint: "זמר פופ צעיר" },
+      { scrambled: "הלא", correct: "אלה", hint: "זמרת ישראלית" }
     ]
   },
   {
@@ -89,7 +114,12 @@ const categories: Category[] = [
       { scrambled: "ןוליא קסמ", correct: "אילון מאסק", hint: "יזם טכנולוגיה" },
       { scrambled: "הינפוא", correct: "אופרה", hint: "מנחה אמריקאית מפורסמת" },
       { scrambled: "שימרט", correct: "טרמפ", hint: "נשיא לשעבר" },
-      { scrambled: "ילכח", correct: "חליל", hint: "שחקן ישראלי" }
+      { scrambled: "ילכח", correct: "חליל", hint: "שחקן ישראלי" },
+      { scrambled: "ןיאסוח", correct: "חוסיין", hint: "שחקן ישראלי מפורסם" },
+      { scrambled: "ירחד", correct: "דחיר", hint: "מנחה ישראלי" },
+      { scrambled: "האר", correct: "רהא", hint: "זמרת ישראלית" },
+      { scrambled: "ןגל", correct: "גלן", hint: "שחקן אמריקאי" },
+      { scrambled: "התח", correct: "חתה", hint: "שחקנית ישראלית" }
     ]
   },
   {
@@ -102,7 +132,12 @@ const categories: Category[] = [
       { scrambled: "ינמי ןגמ", correct: "ימני מגן", hint: "סטנדאפיסט ישראלי" },
       { scrambled: "לטס יבוק", correct: "קובי לטש", hint: "קומיקאי וכוכב טלוויזיה" },
       { scrambled: "לבר טסקר", correct: "רקטס בלר", hint: "קומיקאי אמריקאי" },
-      { scrambled: "גוד ףוגרא", correct: "דוג פרוגא", hint: "קומיקאי בינלאומי" }
+      { scrambled: "גוד ףוגרא", correct: "דוג פרוגא", hint: "קומיקאי בינלאומי" },
+      { scrambled: "לבנא השמ", correct: "משה אבנל", hint: "קומיקאי ישראלי מפורסם" },
+      { scrambled: "יתמר ןוימא", correct: "אימון תמיר", hint: "סטנדאפיסט ישראלי" },
+      { scrambled: "ירג ימע", correct: "עמי גרי", hint: "קומיקאי ישראלי" },
+      { scrambled: "ןאמשיו", correct: "וישמאן", hint: "קומיקאי ישראלי" },
+      { scrambled: "קיספ יבוק", correct: "קובי פיסק", hint: "סטנדאפיסט ישראלי" }
     ]
   }
 ];
