@@ -147,12 +147,15 @@ export default function CategorySelector() {
   const navigate = useNavigate();
 
   const handleStartGame = () => {
-    console.log('handleStartGame called, selectedCategory:', selectedCategory);
     if (selectedCategory) {
-      console.log('Navigating to /gameplay with state:', { category: selectedCategory });
-      navigate('/gameplay', { state: { category: selectedCategory } });
-    } else {
-      console.log('No category selected!');
+      // העברת רק הנתונים הנדרשים ללא האייקון
+      const categoryData = {
+        id: selectedCategory.id,
+        name: selectedCategory.name,
+        color: selectedCategory.color,
+        words: selectedCategory.words
+      };
+      navigate('/gameplay', { state: { category: categoryData } });
     }
   };
 
