@@ -181,7 +181,22 @@ const GamePlay = () => {
         <div className="grid grid-cols-2 gap-4 mb-8">
           <Card className="bg-gaming-cyan/10 border-gaming-cyan/50">
             <CardContent className="p-4 text-center">
-              <div className="text-sm text-muted-foreground mb-1">אתה</div>
+              <div className="flex flex-col items-center gap-2 mb-2">
+                <div className="w-12 h-12 rounded-full bg-gaming-cyan/20 flex items-center justify-center">
+                  {user?.user_metadata?.avatar_url ? (
+                    <img 
+                      src={user.user_metadata.avatar_url} 
+                      alt="שחקן"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gaming-cyan flex items-center justify-center text-white font-bold">
+                      {user?.email?.charAt(0).toUpperCase() || 'P'}
+                    </div>
+                  )}
+                </div>
+                <div className="text-sm text-muted-foreground">אתה</div>
+              </div>
               <div className="text-2xl font-bold text-gaming-cyan flex items-center justify-center gap-2">
                 <Clock className="w-5 h-5" />
                 {formatTime(timeLeft)}
@@ -192,7 +207,14 @@ const GamePlay = () => {
           
           <Card className="bg-gaming-pink/10 border-gaming-pink/50">
             <CardContent className="p-4 text-center">
-              <div className="text-sm text-muted-foreground mb-1">יריב</div>
+              <div className="flex flex-col items-center gap-2 mb-2">
+                <div className="w-12 h-12 rounded-full bg-gaming-pink/20 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gaming-pink flex items-center justify-center text-white font-bold">
+                    AI
+                  </div>
+                </div>
+                <div className="text-sm text-muted-foreground">יריב</div>
+              </div>
               <div className="text-2xl font-bold text-gaming-pink flex items-center justify-center gap-2">
                 <Clock className="w-5 h-5" />
                 {formatTime(opponentTime)}
