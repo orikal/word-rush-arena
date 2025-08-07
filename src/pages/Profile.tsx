@@ -1,13 +1,24 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { User, Star, Trophy, Target, Crown, Palette, Settings } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { User, Star, Trophy, Target, Crown, Palette, Settings, Camera, Edit2 } from "lucide-react"
+import { useAuth } from "@/hooks/useAuth"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
 
 const Profile = () => {
+  const { user, profile } = useAuth()
   const [selectedAvatar, setSelectedAvatar] = useState("🧙‍♂️")
   const [selectedBackground, setSelectedBackground] = useState("beach")
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [displayName, setDisplayName] = useState(profile?.display_name || "")
+  const [profileImage, setProfileImage] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const avatars = [
     { emoji: "🧙‍♂️", name: "קוסם מילים", unlocked: true },
@@ -44,22 +55,141 @@ const Profile = () => {
     { label: "קטגוריה חזקה", value: "סרטים", icon: Crown }
   ]
 
+  const handleSaveName = async () => {
+    if (!user) return
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ display_name: displayName })
+        .eq('id', user.id)
+
+      if (error) throw error
+      
+      toast.success("השם עודכן בהצלחה!")
+      setIsEditingName(false)
+    } catch (error) {
+      console.error('Error updating name:', error)
+      toast.error("שגיאה בעדכון השם")
+    }
+  }
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !user) return
+
+    try {
+      // Upload to Supabase storage
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`
+      
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file)
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName)
+
+      setProfileImage(data.publicUrl)
+      
+      // Update profile with image URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: data.publicUrl })
+        .eq('id', user.id)
+
+      if (updateError) throw updateError
+      
+      toast.success("התמונה עודכנה בהצלחה!")
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      toast.error("שגיאה בהעלאת התמונה")
+    }
+  }
+
+  if (!user || !profile) {
+    return <div className="text-center p-8">אנא התחבר לחשבון</div>
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-card px-4 py-6">
       <div className="max-w-md mx-auto">
         {/* Profile Header */}
         <Card className="mb-6 bg-gradient-primary/10">
           <CardContent className="p-6 text-center">
-            <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gaming-purple/30 border-4 border-gaming-purple flex items-center justify-center text-5xl">
-              {selectedAvatar}
+            <div className="relative w-24 h-24 mx-auto mb-4">
+              <Avatar className="w-24 h-24 border-4 border-gaming-purple">
+                <AvatarImage src={profileImage || profile.avatar_url || ''} />
+                <AvatarFallback className="bg-gaming-purple/30 text-5xl">
+                  {profile.display_name?.charAt(0)?.toUpperCase() || selectedAvatar}
+                </AvatarFallback>
+              </Avatar>
+              <Button
+                size="sm"
+                variant="outline"
+                className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Camera className="w-4 h-4" />
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
             </div>
-            <h1 className="text-xl font-bold mb-2">השם שלך</h1>
+            
+            <div className="flex items-center justify-center gap-2 mb-2">
+              {isEditingName ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    className="text-center h-8"
+                    placeholder="השם שלך"
+                  />
+                  <Button size="sm" onClick={handleSaveName}>
+                    שמור
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditingName(false)
+                      setDisplayName(profile.display_name || "")
+                    }}
+                  >
+                    בטל
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <h1 className="text-xl font-bold">
+                    {profile.display_name || profile.username || "שחקן חדש"}
+                  </h1>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setIsEditingName(true)}
+                    className="h-6 w-6 p-0"
+                  >
+                    <Edit2 className="w-3 h-3" />
+                  </Button>
+                </>
+              )}
+            </div>
             <div className="flex items-center justify-center gap-4 text-sm">
               <Badge className="bg-gaming-purple/20 text-gaming-purple border-gaming-purple/30">
-                רמה 12
+                {profile.wins} נצחונות
               </Badge>
               <Badge className="bg-gaming-orange/20 text-gaming-orange border-gaming-orange/30">
-                2,450 ניקוד
+                {profile.games_played} משחקים
               </Badge>
             </div>
           </CardContent>
