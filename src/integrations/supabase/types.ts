@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           display_name: string | null
           games_played: number | null
@@ -25,6 +26,7 @@ export type Database = {
           wins: number | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           display_name?: string | null
           games_played?: number | null
@@ -34,6 +36,7 @@ export type Database = {
           wins?: number | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           display_name?: string | null
           games_played?: number | null
