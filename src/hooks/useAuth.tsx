@@ -6,6 +6,7 @@ interface Profile {
   id: string;
   username: string | null;
   display_name: string | null;
+  avatar_url?: string | null;
   wins: number;
   games_played: number;
 }
@@ -30,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, username, display_name, avatar_url, wins, games_played')
         .eq('id', userId)
         .maybeSingle(); // Use maybeSingle instead of single to handle no results
 
@@ -48,6 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             id: userId,
             username: null,
             display_name: null,
+            avatar_url: null,
             wins: 0,
             games_played: 0
           })
