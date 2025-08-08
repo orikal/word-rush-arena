@@ -148,14 +148,17 @@ export default function CategorySelector() {
 
   const handleStartGame = () => {
     if (selectedCategory) {
-      // העברת רק הנתונים הנדרשים ללא האייקון
-      const categoryData = {
-        id: selectedCategory.id,
-        name: selectedCategory.name,
-        color: selectedCategory.color,
-        words: selectedCategory.words
-      };
-      navigate('/gameplay', { state: { category: categoryData } });
+      console.log('Navigating to game mode selector with category:', selectedCategory);
+      navigate('/game-mode', { 
+        state: { 
+          selectedCategory: {
+            id: selectedCategory.id,
+            name: selectedCategory.name,
+            color: selectedCategory.color,
+            words: selectedCategory.words
+          }
+        } 
+      });
     }
   };
 

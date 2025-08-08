@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import CategorySelector from "./components/CategorySelector";
+import GameModeSelector from "./components/GameModeSelector";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/categories" element={<CategorySelector />} />
+          <Route path="/game-mode" element={<GameModeSelector />} />
           <Route path="/gameplay" element={<GamePlay />} />
           <Route path="/challenge" element={<ChallengeFriend />} />
           <Route path="/auth" element={<Auth />} />
