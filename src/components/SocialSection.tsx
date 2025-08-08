@@ -5,7 +5,7 @@ import { Share, Users, MessageCircle, Link2, Copy, Zap } from "lucide-react"
 import { useState } from "react"
 
 const SocialSection = () => {
-  const [inviteLink] = useState(`${window.location.origin}/invite/abc123`)
+  const [inviteLink] = useState(`${window.location.origin}/?invite=abc123`)
   const [copied, setCopied] = useState(false)
 
   const handleCopyLink = async () => {
