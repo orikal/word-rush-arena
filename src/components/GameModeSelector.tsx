@@ -26,8 +26,9 @@ export default function GameModeSelector() {
   };
 
   const handleInviteFriend = () => {
-    // Create invite link
-    const inviteLink = `${window.location.origin}/challenge?category=${selectedCategory.id}`;
+    // Navigate to waiting room and create invite link
+    const roomId = Math.random().toString(36).substring(7);
+    const inviteLink = `${window.location.origin}/waiting-room?category=${selectedCategory.id}&room=${roomId}`;
     
     // Copy to clipboard
     navigator.clipboard.writeText(inviteLink).then(() => {
@@ -36,27 +37,44 @@ export default function GameModeSelector() {
         description: "שלח את הקישור לחבר שלך כדי להתחיל משחק",
       });
     });
+
+    // Navigate to waiting room
+    navigate(`/waiting-room?category=${selectedCategory.id}&room=${roomId}`);
   };
 
   const handleShareInvite = () => {
+    const roomId = Math.random().toString(36).substring(7);
     const inviteText = `בוא נשחק משחק ניחוש מילים בקטגוריה ${selectedCategory.name}!`;
-    const inviteLink = `${window.location.origin}/challenge?category=${selectedCategory.id}`;
+    const inviteLink = `${window.location.origin}/waiting-room?category=${selectedCategory.id}&room=${roomId}`;
     
     if (navigator.share) {
       navigator.share({
         title: 'הזמנה למשחק',
         text: inviteText,
         url: inviteLink,
+      }).then(() => {
+        // Navigate to waiting room after successful share
+        navigate(`/waiting-room?category=${selectedCategory.id}&room=${roomId}`);
+      }).catch((error) => {
+        console.error('Error sharing:', error);
+        // Fallback to copy
+        handleCopyAndNavigate(inviteText, inviteLink, roomId);
       });
     } else {
-      // Fallback - copy to clipboard
-      navigator.clipboard.writeText(`${inviteText}\n${inviteLink}`).then(() => {
-        toast({
-          title: "הקישור הועתק!",
-          description: "שלח את הקישור לחבר שלך כדי להתחיל משחק",
-        });
-      });
+      // Fallback for browsers that don't support Web Share API
+      handleCopyAndNavigate(inviteText, inviteLink, roomId);
     }
+  };
+
+  const handleCopyAndNavigate = (inviteText: string, inviteLink: string, roomId: string) => {
+    navigator.clipboard.writeText(`${inviteText}\n${inviteLink}`).then(() => {
+      toast({
+        title: "הקישור הועתק!",
+        description: "שלח את הקישור לחבר שלך כדי להתחיל משחק",
+      });
+      // Navigate to waiting room
+      navigate(`/waiting-room?category=${selectedCategory.id}&room=${roomId}`);
+    });
   };
 
   return (

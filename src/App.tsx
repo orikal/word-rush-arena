@@ -12,6 +12,7 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import CategorySelector from "./components/CategorySelector";
 import GameModeSelector from "./components/GameModeSelector";
+import WaitingRoom from "./components/WaitingRoom";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/categories" element={<CategorySelector />} />
           <Route path="/game-mode" element={<GameModeSelector />} />
+          <Route path="/waiting-room" element={<WaitingRoom />} />
           <Route path="/gameplay" element={<GamePlay />} />
           <Route path="/challenge" element={<ChallengeFriend />} />
           <Route path="/auth" element={<Auth />} />
