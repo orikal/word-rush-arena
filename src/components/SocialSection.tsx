@@ -1,12 +1,16 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Share, Users, MessageCircle, Link2, Copy, Zap } from "lucide-react"
+import { Share, Users, MessageCircle, Link2, Copy, Zap, UserPlus } from "lucide-react"
 import { useState } from "react"
+import AddFriendDialog from "./AddFriendDialog"
+import { useFriends } from "@/hooks/useFriends"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 const SocialSection = () => {
   const [inviteLink] = useState(`${window.location.origin}/?invite=abc123`)
   const [copied, setCopied] = useState(false)
+  const { friends, loading, challengeFriend } = useFriends()
 
   const handleCopyLink = async () => {
     try {
@@ -74,24 +78,33 @@ const SocialSection = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <Button 
-                  onClick={shareToWhatsApp}
-                  variant="gaming"
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
-                  <MessageCircle className="w-4 h-4 ml-2" />
-                  WhatsApp
-                </Button>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Button 
+                    onClick={shareToWhatsApp}
+                    variant="gaming"
+                    className="w-full bg-green-600 hover:bg-green-700"
+                  >
+                    <MessageCircle className="w-4 h-4 ml-2" />
+                    WhatsApp
+                  </Button>
 
-                <Button 
-                  onClick={shareToTelegram}
-                  variant="gaming"
-                  className="w-full bg-blue-500 hover:bg-blue-600"
-                >
-                  <Share className="w-4 h-4 ml-2" />
-                  Telegram
-                </Button>
+                  <Button 
+                    onClick={shareToTelegram}
+                    variant="gaming"
+                    className="w-full bg-blue-500 hover:bg-blue-600"
+                  >
+                    <Share className="w-4 h-4 ml-2" />
+                    Telegram
+                  </Button>
+                </div>
+                
+                <AddFriendDialog>
+                  <Button variant="outline" className="w-full gap-2">
+                    <UserPlus className="w-4 h-4" />
+                    הוסף חבר באימייל
+                  </Button>
+                </AddFriendDialog>
               </div>
 
               <div className="text-center p-4 bg-gaming-green/10 rounded-lg border border-gaming-green/30">
@@ -124,42 +137,49 @@ const SocialSection = () => {
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-bold">חברים פעילים עכשיו:</h3>
+                <h3 className="font-bold">החברים שלי:</h3>
                 
-                {[
-                  { name: "דני123", status: "מחפש יריב", category: "סרטים" },
-                  { name: "שרה_מלכה", status: "במשחק", category: "שירים" },
-                  { name: "גיימר_פרו", status: "זמין", category: "ספרים" }
-                ].map((friend, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-card/50 border border-gaming-purple/20">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center text-sm">
-                        {friend.name[0]}
+                {loading ? (
+                  <div className="text-center py-4 text-muted-foreground">
+                    טוען חברים...
+                  </div>
+                ) : friends.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <div className="text-4xl mb-2">👥</div>
+                    <p>עדיין אין לך חברים</p>
+                    <p className="text-sm">הוסף חברים באימייל כדי להתחיל לשחק יחד!</p>
+                  </div>
+                ) : (
+                  friends.map((friend) => (
+                    <div key={friend.friend_id} className="flex items-center justify-between p-3 rounded-lg bg-card/50 border border-gaming-purple/20">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback className="bg-gradient-primary text-white text-sm">
+                            {friend.display_name?.charAt(0).toUpperCase() || friend.username?.charAt(0).toUpperCase() || '?'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{friend.display_name || friend.username}</div>
+                          <div className="text-xs text-muted-foreground">{friend.wins} נצחונות</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-medium">{friend.name}</div>
-                        <div className="text-xs text-muted-foreground">{friend.category}</div>
-                      </div>
-                    </div>
-                    
-                    <div className="text-left">
-                      <div className={`text-xs px-2 py-1 rounded-full ${
-                        friend.status === "זמין" 
-                          ? "bg-gaming-green/20 text-gaming-green" 
-                          : friend.status === "מחפש יריב"
-                          ? "bg-gaming-orange/20 text-gaming-orange"
-                          : "bg-gaming-cyan/20 text-gaming-cyan"
-                      }`}>
-                        {friend.status}
-                      </div>
-                      {friend.status === "זמין" && (
-                        <Button variant="ghost" size="sm" className="text-xs mt-1 h-6">
+                      
+                      <div className="text-left">
+                        <div className="text-xs px-2 py-1 rounded-full bg-gaming-green/20 text-gaming-green">
+                          {friend.status}
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-xs mt-1 h-6"
+                          onClick={() => challengeFriend(friend.friend_id)}
+                        >
                           אתגר
                         </Button>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
