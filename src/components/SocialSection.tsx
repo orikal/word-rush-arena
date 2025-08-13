@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Share, Users, MessageCircle, Link2, Copy, Zap, UserPlus } from "lucide-react"
 import { useState } from "react"
 import AddFriendDialog from "./AddFriendDialog"
+import FriendRequestsList from "./FriendRequestsList"
 import { useFriends } from "@/hooks/useFriends"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
@@ -45,8 +46,11 @@ const SocialSection = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
-          {/* Invite Section */}
-          <Card className="bg-gradient-primary/10 border-gaming-purple/50">
+          <div className="space-y-6">
+            <FriendRequestsList />
+            
+            {/* Invite Section */}
+            <Card className="bg-gradient-primary/10 border-gaming-purple/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gaming-purple">
                 <Users className="w-5 h-5" />
@@ -115,6 +119,7 @@ const SocialSection = () => {
               </div>
             </CardContent>
           </Card>
+          </div>
 
           {/* Quick Challenge */}
           <Card>

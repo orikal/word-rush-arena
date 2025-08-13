@@ -15,16 +15,37 @@ interface Friend {
 
 interface FriendRequest {
   id: string;
+  sender_id: string;
   recipient_email: string;
   message?: string;
   status: string;
   created_at: string;
+  sender_profile?: {
+    username: string;
+    display_name: string;
+    avatar_url?: string;
+  };
+}
+
+interface IncomingFriendRequest {
+  id: string;
+  sender_id: string;
+  recipient_email: string;
+  message?: string;
+  status: string;
+  created_at: string;
+  sender_profile?: {
+    username: string;
+    display_name: string;
+    avatar_url?: string;
+  };
 }
 
 export const useFriends = () => {
   const { user } = useAuth();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+  const [incomingRequests, setIncomingRequests] = useState<IncomingFriendRequest[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Fetch friends
@@ -60,6 +81,99 @@ export const useFriends = () => {
       setFriendRequests(data || []);
     } catch (error) {
       console.error('Error fetching friend requests:', error);
+    }
+  };
+
+  // Fetch incoming friend requests
+  const fetchIncomingRequests = async () => {
+    if (!user) return;
+    
+    try {
+      // First get the basic request data
+      const { data: requestsData, error: requestsError } = await supabase
+        .from('friend_requests')
+        .select('*')
+        .eq('recipient_email', user.email)
+        .eq('status', 'pending');
+      
+      if (requestsError) throw requestsError;
+      
+      if (!requestsData || requestsData.length === 0) {
+        setIncomingRequests([]);
+        return;
+      }
+      
+      // Get sender profiles separately
+      const senderIds = requestsData.map(req => req.sender_id);
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, username, display_name, avatar_url')
+        .in('id', senderIds);
+      
+      if (profilesError) throw profilesError;
+      
+      // Combine the data
+      const combinedData = requestsData.map(request => ({
+        ...request,
+        sender_profile: profilesData?.find(profile => profile.id === request.sender_id)
+      }));
+      
+      setIncomingRequests(combinedData);
+    } catch (error) {
+      console.error('Error fetching incoming requests:', error);
+    }
+  };
+
+  // Accept incoming friend request
+  const acceptIncomingRequest = async (requestId: string) => {
+    if (!user) return false;
+    
+    try {
+      const { data, error } = await supabase.rpc('accept_friend_request', {
+        request_id: requestId
+      });
+      
+      if (error) throw error;
+      
+      if (data) {
+        toast.success('בקשת החברות אושרה!');
+        fetchIncomingRequests();
+        fetchFriends();
+        return true;
+      } else {
+        toast.error('שגיאה באישור בקשת החברות');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+      toast.error('שגיאה באישור בקשת החברות');
+      return false;
+    }
+  };
+
+  // Reject incoming friend request
+  const rejectIncomingRequest = async (requestId: string) => {
+    if (!user) return false;
+    
+    try {
+      const { data, error } = await supabase.rpc('reject_friend_request', {
+        request_id: requestId
+      });
+      
+      if (error) throw error;
+      
+      if (data) {
+        toast.success('בקשת החברות נדחתה');
+        fetchIncomingRequests();
+        return true;
+      } else {
+        toast.error('שגיאה בדחיית בקשת החברות');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error rejecting friend request:', error);
+      toast.error('שגיאה בדחיית בקשת החברות');
+      return false;
     }
   };
 
@@ -155,17 +269,22 @@ export const useFriends = () => {
     if (user) {
       fetchFriends();
       fetchFriendRequests();
+      fetchIncomingRequests();
     }
   }, [user]);
 
   return {
     friends,
     friendRequests,
+    incomingRequests,
     loading,
     sendFriendRequest,
     acceptFriendRequest,
+    acceptIncomingRequest,
+    rejectIncomingRequest,
     challengeFriend,
     fetchFriends,
-    fetchFriendRequests
+    fetchFriendRequests,
+    fetchIncomingRequests
   };
 };

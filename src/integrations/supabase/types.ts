@@ -109,6 +109,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_friend_request: {
+        Args: { request_id: string }
+        Returns: boolean
+      }
       get_user_friends: {
         Args: { user_uuid: string }
         Returns: {
@@ -120,6 +124,10 @@ export type Database = {
           status: string
           is_online: boolean
         }[]
+      }
+      reject_friend_request: {
+        Args: { request_id: string }
+        Returns: boolean
       }
     }
     Enums: {
