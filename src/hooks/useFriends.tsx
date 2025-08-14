@@ -185,7 +185,8 @@ export const useFriends = () => {
     }
 
     try {
-      const { error } = await supabase
+      // First, save the request to database
+      const { error: dbError } = await supabase
         .from('friend_requests')
         .insert({
           sender_id: user.id,
@@ -193,16 +194,43 @@ export const useFriends = () => {
           message: message || 'בוא נשחק משחק מילים!'
         });
       
-      if (error) {
-        if (error.code === '23505') {
+      if (dbError) {
+        if (dbError.code === '23505') {
           toast.error('כבר שלחת הזמנה לאימייל הזה');
         } else {
-          throw error;
+          throw dbError;
         }
         return false;
       }
+
+      // Get user profile for email
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name, username')
+        .eq('id', user.id)
+        .single();
+
+      const senderName = profile?.display_name || profile?.username || user.email?.split('@')[0] || 'משתמש';
+      const inviteUrl = `${window.location.origin}/?invite=${email}`;
+
+      // Send invitation email
+      const { error: emailError } = await supabase.functions.invoke('send-friend-invitation', {
+        body: {
+          senderName,
+          senderEmail: user.email,
+          recipientEmail: email,
+          message,
+          inviteUrl
+        }
+      });
+
+      if (emailError) {
+        console.error('Error sending invitation email:', emailError);
+        toast.error('בקשת החברות נשמרה אך לא הצלחנו לשלוח אימייל');
+      } else {
+        toast.success('הזמנת החברות נשלחה בהצלחה באימייל!');
+      }
       
-      toast.success('הזמנת החברות נשלחה בהצלחה!');
       fetchFriendRequests();
       return true;
     } catch (error) {
